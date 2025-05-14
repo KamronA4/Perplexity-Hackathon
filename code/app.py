@@ -1,18 +1,24 @@
 # app.py
-# app file for streamlit deployment. I 
+# app file for streamlit deployment.
 
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
 from streamlit_autorefresh import st_autorefresh
 from MapFetcher import RI_MapFetcher
+import csv
+import os
 
 # Init
-api_key = 'LhMzXgy2kWSqeCJZwc5XYClmjw9vvkIh' # my key please don't use it thank you
-fetcher = RI_MapFetcher(api_key) # init RI_MapFetcher object
+file = ''
+with open(file, mode='r') as f:
+    reader = csv.DictReader(f)
+    incidents = []
+    for row in reader:
+        incidents.append(row)
 
 # Streamlit component
-st_autorefresh(interval=15 * 60 * 1000)  # refresh every 15 minutes to avoid dumb crashing
+st_autorefresh(interval=15 * 60 * 1000)  # refresh every 15 minutes to avoid crashing
 
 st.title("Rhode Island Traffic Map")
 
