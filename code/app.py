@@ -1,6 +1,8 @@
 # app.py
 # app file for streamlit deployment.
 
+# Need: Mapfetcher.get_town_coords()
+
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
@@ -10,8 +12,15 @@ import csv
 import os
 
 # Init
-file = ''
-with open(file, mode='r') as f:
+# Access 'traffic_incidents.csv'
+file_path = os.path.join(data_folder, 'traffic_incidents.csv')
+if os.path.exists(file_path):
+    with open(file_path, 'r') as file:
+        incidents_file = file.read()
+
+# Create incidents dict
+incidents = ''
+with open(incidents_file, mode='r') as f:
     reader = csv.DictReader(f)
     incidents = []
     for row in reader:
@@ -37,7 +46,6 @@ except Exception as e:
 m = folium.Map(location=[lat, lng], zoom_start=12)
 
 # Traffic output (use a bounding box covering all of RI)
-incidents = fetcher.get_traffic_incidents()
 for incident in incidents:
     folium.Marker([incident['lat'], incident['lng']], popup=incident['shortDesc'], icon=folium.Icon(color='red' if incident['severity'] > 2 else 'orange')).add_to(m)
 
