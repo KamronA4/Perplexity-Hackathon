@@ -38,7 +38,7 @@ st.title("Rhode Island Traffic Map")
 # Filters
 # Date filter
 # Extract and sort date options
-date_options = sorted(icnidents['date'].unique())
+date_options = sorted(incidents['date'].unique())
 today = datetime.date.today()
 
 # Default to today if exists in data, otherwise -> first available entry
