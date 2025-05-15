@@ -15,7 +15,7 @@ import os
 
 # Init
 # Access 'traffic_incidents.csv'
-file_path = os.path.join(data_folder, 'traffic_incidents.csv')
+file_path = os.path.join('data', 'traffic_incidents.csv')
 if os.path.exists(file_path):
     try:
         incidents = pd.read_csv(file_path, chunksize=100)
