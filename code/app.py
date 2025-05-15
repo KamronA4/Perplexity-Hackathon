@@ -17,16 +17,18 @@ import os
 # Access 'traffic_incidents.csv'
 file_path = os.path.join(data_folder, 'traffic_incidents.csv')
 if os.path.exists(file_path):
-    with open(file_path, 'r') as file:
-        incidents_file = file.read()
+    try:
+        incidents = pd.read_csv(file_path, chunksize=100)
 
-# Create incidents dict
-incidents = ''
-with open(incidents_file, mode='r') as f:
-    reader = csv.DictReader(f)
-    incidents = []
-    for row in reader:
-        incidents.append(row)
+        # Process CSV data
+        incidents['timestamp'] = pd.to_datetime(incidents['timestamp'])
+        incidents['date'] = incidents['timestamp'].dt.date
+        incidents['hour'] = incidents['timestamp'].dt.hour
+
+    except Exception as e:
+        st.error(f"Error reading CSV file: {e}")
+else:
+    st.error(f"File not found: {file_path}")
 
 # Streamlit component
 st_autorefresh(interval=15 * 60 * 1000)  # refresh every 15 minutes to avoid crashing
@@ -35,8 +37,15 @@ st.title("Rhode Island Traffic Map")
 
 # Filters
 # Date filter
-date_options = df['date'].sort_values().unique()
-selected_date = st.sidebar.selectbox("Select Date:", date_options)
+# Extract and sort date options
+date_options = sorted(df['date'].unique())
+today = datetime.date.today()
+
+# Default to today if exists in data, otherwise -> first available entry
+default_date = today if today in date_options else date_options[0]
+
+# Streamlit sidebar with default
+selected_date = st.sidebar.selectbox("Select Date", date_options, index=date_options.index(default_date))
 
 # Hour slider
 selected_hour = st.sidebar.slider("Select Hour (24H):", min_value=0, max_value=23, value=8)
@@ -55,12 +64,30 @@ try:
     st.success(f"Showing map for {town} at ({lat}, {lng})")
 except Exception as e:
     st.error(f"Error fetching town coordinates: {e}")
+    st.stop() """
+
+
+# Town input
+town = st.text_input("Enter a Rhode Island town name:", "Providence")
+# Town output
+try:
+    for incident in filtered_incidents:
+        if incident['town'] == town:
+            lat = incident['lat']
+            lng = incident['lng']
+            st.success(f"Showing map for {town} at ({lat}, {lng})")
+            break
+    else:
+        st.error(f"No incidents found for {town}")
+except Exception as e:
+    st.error(f"Error fetching town coordinates: {e}")
     st.stop()
 
 # Folium map component
 m = folium.Map(location=[lat, lng], zoom_start=12)
 
 # Traffic output (use a bounding box covering all of RI)
+# Note: popup is where we want to integrate Sonar
 for incident in incidents:
     folium.Marker([incident['lat'], incident['lng']], popup=incident['shortDesc'], icon=folium.Icon(color='red' if incident['severity'] > 2 else 'orange')).add_to(m)
 
