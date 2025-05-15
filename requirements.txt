@@ -5,5 +5,4 @@ requests
 pandas
 streamlit-autorefresh
 datetime
-os
 csv
