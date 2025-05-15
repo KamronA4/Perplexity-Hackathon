@@ -8,6 +8,8 @@ import folium
 from streamlit_folium import st_folium
 from streamlit_autorefresh import st_autorefresh
 from MapFetcher import RI_MapFetcher
+import datetime
+import pandas as pd
 import csv
 import os
 
@@ -31,7 +33,20 @@ st_autorefresh(interval=15 * 60 * 1000)  # refresh every 15 minutes to avoid cra
 
 st.title("Rhode Island Traffic Map")
 
-# Town input
+# Filters
+# Date filter
+date_options = df['date'].sort_values().unique()
+selected_date = st.sidebar.selectbox("Select Date:", date_options)
+
+# Hour slider
+selected_hour = st.sidebar.slider("Select Hour (24H):", min_value=0, max_value=23, value=8)
+
+filtered_incidents = incidents[
+    (incidents['date'] == selected_date) & (incidents['hour'] == selected_hour)
+]
+
+# old, ignore for now
+""" # Town input
 town = st.text_input("Enter a Rhode Island town name:", "Providence")
 
 # Town output
