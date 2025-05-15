@@ -14,20 +14,12 @@ import csv
 import os
 
 # Init
-<<<<<<< HEAD
-# Load data from 'traffic_incidents.csv'
-file_path = os.path.join('data', 'traffic_incidents.csv')
-if os.path.exists(file_path):
-    try:
-        incidents_chunks = pd.read_csv(file_path, chunksize=100)
-        incidents = pd.concat(incidents_chunks)  # Concat the chunks into a single df
-=======
+
 # Access 'traffic_incidents.csv'
 file_path = 'data/traffic_incidents.csv'
 if os.path.exists(file_path):
     try:
         incidents = pd.read_csv(file_path)
->>>>>>> cfde1cf (log 5/15 - Bugfixing. Attempt to fix the Streamlit parsing error for csv file.)
 
         if incidents.empty or not {'timestamp', 'lat', 'lng', 'town', 'severity', 'shortDesc'}.issubset(incidents.columns):
             st.error("The CSV file is empty or missing required columns.")
@@ -53,11 +45,6 @@ st.title('Rhode Island Traffic Map')
 # Filters
 
 # Date filter
-<<<<<<< HEAD
-# Extract and sort the unique date options
-=======
-# Extract and sort date options
->>>>>>> cfde1cf (log 5/15 - Bugfixing. Attempt to fix the Streamlit parsing error for csv file.)
 date_options = sorted(incidents['date'].unique())
 today = datetime.date.today()
 
@@ -65,19 +52,11 @@ today = datetime.date.today()
 default_date = today if today in date_options else date_options[0]
 default_hour = datetime.datetime.now().hour
 
-<<<<<<< HEAD
-# Implement Streamlit sidebar with default
-selected_date = st.sidebar.selectbox("Select Date", date_options, index=date_options.index(default_date))
-
-# Implement Hour slider
-selected_hour = st.sidebar.slider("Select Hour (24H):", min_value=0, max_value=23, value=default_hour)
-=======
 # Streamlit sidebar with default
 selected_date = st.sidebar.selectbox('Select Date', date_options, index=date_options.index(default_date))
 
 # Hour slider
-selected_hour = st.sidebar.slider('Select Hour (24H):', min_value=0, max_value=23, value=8)
->>>>>>> cfde1cf (log 5/15 - Bugfixing. Attempt to fix the Streamlit parsing error for csv file.)
+selected_hour = st.sidebar.slider('Select Hour (24H):', min_value=0, max_value=23, value=datetime.now().hour)
 
 # Date-time Filter
 filtered_incidents = incidents[
@@ -100,37 +79,6 @@ except Exception as e:
 lat, lng = 41.8236, -71.4222  # This is Providence
 
 # Town input
-<<<<<<< HEAD
-town = st.text_input("Enter a Rhode Island town name:", "Providence")
-# Town output
-lat, lng = None, None  # init values
-try:
-    for incident in filtered_incidents:
-        if incident['town'] == town:
-            lat = incident['lat']
-            lng = incident['lng']
-            st.success(f"Showing map for {town} at ({lat}, {lng})")
-            break
-    else:
-        st.error(f"No incidents found for {town}")
-except Exception as e:
-    st.error(f"Error fetching town coordinates: {e}")
-    st.stop()
-
-if lat is None or lng is None:
-    st.error("Unable to load map. Latitude and Longitude are not defined.")
-    st.stop()
-
-# Folium map component
-m = folium.Map(location=[lat, lng], zoom_start=12)
-
-# Traffic output 
-# Note: popup is likely where we want to integrate Sonar
-for _, incident in filtered_incidents.iterrows():
-    if ('lat' in incident) and ('lng' in incident) and ('severity' in incident) and ('shortDesc' in incident):
-        color = 'red' if incident['severity'] > 2 else 'orange'
-        folium.Marker([incident['lat'], incident['lng']], popup=incident['shortDesc'], icon=folium.Icon(color=color)).add_to(m)
-=======
 town = st.text_input('Enter a Rhode Island town name:', 'Providence')
 town_incidents = filtered_incidents[filtered_incidents['location'].str.lower() == town.lower()]
 if not town_incidents.empty:
@@ -151,7 +99,6 @@ for _, incident in filtered_incidents.iterrows():
         popup=incident['description'],
         icon=folium.Icon(color='red' if incident['severity'] > 2 else 'orange')
     ).add_to(m)
->>>>>>> cfde1cf (log 5/15 - Bugfixing. Attempt to fix the Streamlit parsing error for csv file.)
 
 # Display the folium map w/ features in Streamlit
 st_folium(m, width=700, height=500)
