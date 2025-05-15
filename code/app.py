@@ -16,7 +16,7 @@ import os
 # Init
 
 # Access 'traffic_incidents.csv'
-file_path = 'traffic_incidents.csv'
+file_path = '/workspaces/Perplexity-Hackathon/code/traffic_incidents.csv'
 if os.path.exists(file_path):
     try:
         incidents = pd.read_csv(file_path)
@@ -56,7 +56,7 @@ default_hour = datetime.datetime.now().hour
 selected_date = st.sidebar.selectbox('Select Date', date_options, index=date_options.index(default_date))
 
 # Hour slider
-selected_hour = st.sidebar.slider('Select Hour (24H):', min_value=0, max_value=23, value=datetime.now().hour)
+selected_hour = st.sidebar.slider('Select Hour (24H):', min_value=0, max_value=23, value=datetime.datetime.now().hour)
 
 # Date-time Filter
 filtered_incidents = incidents[
