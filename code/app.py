@@ -16,7 +16,7 @@ import os
 # Init
 
 # Access 'traffic_incidents.csv'
-file_path = 'data/traffic_incidents.csv'
+file_path = '../data/traffic_incidents.csv'
 if os.path.exists(file_path):
     try:
         incidents = pd.read_csv(file_path)
