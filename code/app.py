@@ -16,12 +16,12 @@ import os
 # Init
 
 # Access 'traffic_incidents.csv'
-file_path = '/workspaces/Perplexity-Hackathon/code/traffic_incidents.csv'
+file_path = 'code/traffic_incidents.csv'
 if os.path.exists(file_path):
     try:
         incidents = pd.read_csv(file_path)
 
-        if incidents.empty or not {'timestamp', 'lat', 'lng', 'town', 'severity', 'shortDesc'}.issubset(incidents.columns):
+        if incidents.empty or not {'timestamp', 'lat', 'lng', 'location', 'severity', 'description'}.issubset(incidents.columns):
             st.error("The CSV file is empty or missing required columns.")
             st.stop()
 
