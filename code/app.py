@@ -94,9 +94,22 @@ m = folium.Map(location=[lat, lng], zoom_start=12)
 # Add traffic incidents to the map
 # Note: popup is where we likely want to integrate Sonar
 for _, incident in filtered_incidents.iterrows():
+    # Clause to customize each marker
+    html = f"""
+            <div style="background-color: rgba(255, 255, 255, 0.85); 
+                    padding: 10px; 
+                    border-radius: 8px; 
+                    font-family: 'Verdana', sans-serif; 
+                    font-size: 13px;
+                    max-width: 200px;">
+                <strong>{incident['description']}</strong><br>
+            </div>
+            """
+    # Then we add the popup to the marker
+    popup = folium.Popup(html, max_width=250)
     folium.Marker(
         location=[incident['lat'], incident['lng']],
-        popup=incident['description'],
+        popup=popup,
         icon=folium.Icon(color='red' if incident['severity'] > 2 else 'orange')
     ).add_to(m)
 
